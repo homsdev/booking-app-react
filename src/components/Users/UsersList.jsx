@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
-import data from "../../static.json";
 
 import getData from "../../utils/api";
 
 export const UsersList = () => {
-  //const { users } = data;
 
   const [users, setUsers] = useState([]);
   const [active, setActive] = useState(1);

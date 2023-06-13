@@ -1,4 +1,4 @@
-import { useReducer, useEffect } from "react";
+import { useReducer, useEffect, useRef } from "react";
 import data from "../../static.json";
 import { FaArrowRight } from "react-icons/fa";
 
@@ -27,6 +27,8 @@ export const BookablesList = () => {
    * initFn: Uses initialization arguments to generate initial state
    */
   const [state, dispatch] = useReducer(reducer, initialState);
+  const timerRef = useRef(null);
+  const nextButtonRef = useRef();
 
   const { group, bookableIndex, bookables } = state;
   const { hasDetails, isLoading, error } = state;
@@ -60,10 +62,15 @@ export const BookablesList = () => {
 
   function changeBookable(selectedIndex) {
     dispatch({ type: "SET_BOOKABLE", payload: selectedIndex });
+    nextButtonRef.current.focus();
   }
 
   function nextBookable() {
     dispatch({ type: "NEXT_BOOKABLE" });
+  }
+
+  function stopPresentation() {
+    window.clearInterval(timerRef.current);
   }
 
   useEffect(() => {
@@ -84,12 +91,21 @@ export const BookablesList = () => {
       );
   }, []);
 
-  if(error){
-    return <p>{error.message}</p>
+  useEffect(()=>{
+    
+    timerRef.current = setInterval(()=>{
+      !isLoading && dispatch({type:'NEXT_BOOKABLE'});
+    },3000);
+
+    return stopPresentation;
+  },[isLoading]);//TODO: Use Data instead of loading
+
+  if (error) {
+    return <p>{error.message}</p>;
   }
 
-  if(isLoading){
-    return <p>Spinner Loading Bookables...</p>
+  if (isLoading) {
+    return <p>Spinner Loading Bookables...</p>;
   }
 
   /**UI: Description of elements that make up a user interface */
@@ -113,7 +129,7 @@ export const BookablesList = () => {
           ))}
         </ul>
         <p>
-          <button className="btn" onClick={nextBookable} autoFocus>
+          <button className="btn" onClick={nextBookable} ref={nextButtonRef} autoFocus>
             <FaArrowRight />
             <span>Next</span>
           </button>
@@ -136,6 +152,9 @@ export const BookablesList = () => {
                   />
                   Show Details
                 </label>
+                <button className="btn" onClick={stopPresentation}>
+                  Stop
+                </button>
               </span>
             </div>
             <p>{bookable.notes}</p>
