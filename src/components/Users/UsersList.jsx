@@ -2,27 +2,26 @@ import { useEffect, useState } from "react";
 
 import getData from "../../utils/api";
 
-export const UsersList = () => {
+export const UsersList = ({selectedUser,setSelectedUser}) => {
 
   const [users, setUsers] = useState([]);
-  const [active, setActive] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const user = users[active];
 
   useEffect(() => {
     setIsLoading(true);
     getData("http://localhost:3001/users")
       .then((users) => {
         setUsers(users);
+        setSelectedUser(users[0]);
         setIsLoading(false);
       })
       .catch((error) => {
         setIsLoading(false);
         setError(error);
       });
-  }, []);
+  }, [setSelectedUser]);
 
   if(error){
     return <p>Oops: {error.message}</p>
@@ -35,26 +34,14 @@ export const UsersList = () => {
           <p>Loading...</p>
         ) : (
           users.map((u, i) => (
-            <li key={i} className={active === i ? "selected" : null}>
-              <button onClick={() => setActive(i)} className="btn">
+            <li key={i} className={u.id === selectedUser?.id ? "selected" : null}>
+              <button onClick={() => setSelectedUser(u)} className="btn">
                 {u.name}
               </button>
             </li>
           ))
         )}
       </ul>
-
-      {user && (
-        <div className="bookable-details">
-          <div className="item">
-            <div className="item-header">
-              <h2>{user.name}</h2>
-            </div>
-            <h3>{user.title}</h3>
-            <p>{user.notes}</p>
-          </div>
-        </div>
-      )}
     </>
   );
 };
