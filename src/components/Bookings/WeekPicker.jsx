@@ -3,6 +3,17 @@ import reducer from "./weekReducer";
 import { getWeek } from "../../utils/date-wrangler";
 import { FaChevronLeft, FaCalendarDay, FaChevronRight,FaCalendarCheck } from "react-icons/fa";
 
+
+/**
+ * Controlled component: use hooks to manage state and getting react to update the DOM
+ * Uncontrolled component: read its state from the DOM
+ */
+
+/**
+ * 
+ * @param {*} param0 
+ * @returns 
+ */
 export const WeekPicker = ({ date }) => {
 
   /**Generates initial state, passing date to getWeek */
