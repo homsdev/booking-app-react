@@ -1,8 +1,11 @@
-import { useReducer,useRef } from "react";
-import reducer from "./weekReducer";
-import { getWeek } from "../../utils/date-wrangler";
-import { FaChevronLeft, FaCalendarDay, FaChevronRight,FaCalendarCheck } from "react-icons/fa";
+import { useRef } from "react";
 
+import {
+  FaChevronLeft,
+  FaCalendarDay,
+  FaChevronRight,
+  FaCalendarCheck,
+} from "react-icons/fa";
 
 /**
  * Controlled component: use hooks to manage state and getting react to update the DOM
@@ -10,22 +13,18 @@ import { FaChevronLeft, FaCalendarDay, FaChevronRight,FaCalendarCheck } from "re
  */
 
 /**
- * 
- * @param {*} param0 
- * @returns 
+ *
+ * @param {Function} dispatchFunction
+ * @returns
  */
-export const WeekPicker = ({ date }) => {
-
-  /**Generates initial state, passing date to getWeek */
-  const [week, dispatch] = useReducer(reducer, date, getWeek);
+export const WeekPicker = ({ dispatch }) => {
   const textBoxRef = useRef();
-
 
   function goToDate() {
     dispatch({
       type: "SET_DATE",
-      payload: textBoxRef.current.value
-    })
+      payload: textBoxRef.current.value,
+    });
   }
 
   return (
@@ -42,7 +41,12 @@ export const WeekPicker = ({ date }) => {
         </button>
 
         <span>
-          <input type="text" ref={textBoxRef} placeholder="e.g. 2020-9-02" defaultValue="2020-06-24" />
+          <input
+            type="text"
+            ref={textBoxRef}
+            placeholder="e.g. 2020-9-02"
+            defaultValue="2020-06-24"
+          />
           <button className="go btn" onClick={goToDate}>
             <FaCalendarCheck />
             <span>Go</span>
@@ -54,9 +58,9 @@ export const WeekPicker = ({ date }) => {
           <span>Next</span>
         </button>
       </p>
-      <p>
+      {/* <p>
         {week.start.toDateString()} - {week.end.toDateString()}
-      </p>
+      </p> */}
     </div>
   );
 };

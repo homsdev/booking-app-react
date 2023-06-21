@@ -18,8 +18,6 @@ export const BookablesList = ({ bookable, setBookable }) => {
   const bookablesInGroup = bookables.filter((b) => b.group === group);
   const groups = [...new Set(bookables.map((b) => b.group))]; //Creates a new array of unique values & ignore all repeated
 
-  const nextButtonRef = useRef();
-
   /** Handling side effects */
   useEffect(() => {
     getData("http://localhost:3001/bookables")
@@ -35,7 +33,6 @@ export const BookablesList = ({ bookable, setBookable }) => {
   }, [setBookable]);
 
   /**Event Handler: function that runs in response to an event */
-
   function changeGroup({ target }) {
     const bookablesInSelectedGroup = bookables.filter(
       (b) => b.group === target.value
@@ -45,7 +42,6 @@ export const BookablesList = ({ bookable, setBookable }) => {
 
   function changeBookable(selectedBookable) {
     setBookable(selectedBookable);
-    nextButtonRef.current.focus();
   }
 
   function nextBookable() {
@@ -86,7 +82,6 @@ export const BookablesList = ({ bookable, setBookable }) => {
         <button
           className="btn"
           onClick={nextBookable}
-          ref={nextButtonRef}
           autoFocus
         >
           <FaArrowRight />
