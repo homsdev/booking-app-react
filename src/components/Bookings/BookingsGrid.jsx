@@ -9,13 +9,11 @@ export const BookingsGrid = (props) => {
   const [bookings, setBookings] = useState(null);
   const [error, setError] = useState(false);
 
-  const {grid, sessions, dates} = useMemo(
-
-    () => bookable ? getGrid(bookable, week.start) : {},
+  const { grid, sessions, dates } = useMemo(
+    () => (bookable ? getGrid(bookable, week.start) : {}),
 
     [bookable, week.start]
   );
-
 
   useEffect(() => {
     if (bookable) {
@@ -38,22 +36,21 @@ export const BookingsGrid = (props) => {
 
   function cell(session, date) {
     const cellData = bookings?.[session]?.[date] || grid[session][date];
-
     const isSelected = booking?.session === session && booking?.date === date;
 
     return (
       <td
         key={date}
         className={isSelected ? "selected" : null}
-        onClick={booking ? () => setBooking(cellData) : null}
+        onClick={ bookings ? () => setBooking(cellData) : null}
       >
         {cellData.title}
       </td>
     );
   }
 
-  if(!grid){
-    return <p>Loading...</p>
+  if (!grid) {
+    return <p>Loading...</p>;
   }
 
   return (
@@ -63,9 +60,7 @@ export const BookingsGrid = (props) => {
           {`There was a problem loading the bookings data (${error})`}
         </p>
       )}
-      <table 
-        className={bookings ? "bookingsGrid active" : "bookingsGrid"}
-      >
+      <table className={bookings ? "bookingsGrid active" : "bookingsGrid"}>
         <thead>
           <tr>
             <th>
