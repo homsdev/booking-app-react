@@ -14,7 +14,6 @@ export const UsersList = ({selectedUser,setSelectedUser}) => {
     getData("http://localhost:3001/users")
       .then((users) => {
         setUsers(users);
-        setSelectedUser(users[0]);
         setIsLoading(false);
       })
       .catch((error) => {
