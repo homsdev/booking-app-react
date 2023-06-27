@@ -1,26 +1,17 @@
-import { useState, useEffect, useContext } from "react";
-import UserContext, { UserSetContext } from "./UserContext";
+import { useState, useEffect } from "react";
+import { useUser } from "./UserContext";
+import useFetch from "../../utils/useFetch";
 
 export const UserPicker = () => {
-  const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const user = useContext(UserContext);
-  const setUser = useContext(UserSetContext);
+  const [user, setUser] = useUser();
+
+  const { data: users = [], status } = useFetch("http://localhost:3001/users");
 
   useEffect(() => {
-    async function fetchData() {
-      const response = await fetch("http://localhost:3001/users");
-      const data = await response.json();
-
-      if (data) {
-        setUsers(data);
-        setUser(data[0]);
-        setIsLoading(false);
-      }
-    }
-
-    fetchData();
-  }, [setUser]);
+    setUser(users[0]);
+    if (status === "success") setIsLoading(false);
+  }, [users, setUser, status]);
 
   function handleSelect({ target }) {
     const selectedID = parseInt(target.value, 10);
