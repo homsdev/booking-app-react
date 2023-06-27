@@ -1,38 +1,21 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect } from "react";
 
-import { getGrid, transformBookings } from "./grid-builder";
-
-import { getBookings } from "../../utils/api";
+import { useBookings, useGrid } from "./bookingsHooks";
 
 export const BookingsGrid = (props) => {
   const { week, bookable, booking, setBooking } = props;
-  const [bookings, setBookings] = useState(null);
-  const [error, setError] = useState(false);
 
-  const { grid, sessions, dates } = useMemo(
-    () => (bookable ? getGrid(bookable, week.start) : {}),
-
-    [bookable, week.start]
+  const { bookings, status, error } = useBookings(
+    bookable?.id,
+    week.start,
+    week.end
   );
 
+  const { grid, sessions, dates } = useGrid(bookable, week.start);
+
   useEffect(() => {
-    if (bookable) {
-      let doUpdate = true;
-      setBookings(null);
-      setError(false);
-      setBooking(null);
-
-      getBookings(bookable.id, week.start, week.end)
-        .then((resp) => {
-          if (doUpdate) {
-            setBookings(transformBookings(resp));
-          }
-        })
-        .catch(setError);
-
-      return () => (doUpdate = false);
-    }
-  }, [week, bookable, setBooking]);
+    setBooking(null);
+  }, [bookable, week.start, setBooking]);
 
   function cell(session, date) {
     const cellData = bookings?.[session]?.[date] || grid[session][date];
@@ -42,7 +25,7 @@ export const BookingsGrid = (props) => {
       <td
         key={date}
         className={isSelected ? "selected" : null}
-        onClick={ bookings ? () => setBooking(cellData) : null}
+        onClick={status === "success" ? () => setBooking(cellData) : null}
       >
         {cellData.title}
       </td>
@@ -50,12 +33,12 @@ export const BookingsGrid = (props) => {
   }
 
   if (!grid) {
-    return <p>Loading...</p>;
+    return <p>Waiting for bookable and week details...</p>;
   }
 
   return (
     <>
-      {error && (
+      {status === "error" && (
         <p className="bookingsError">
           {`There was a problem loading the bookings data (${error})`}
         </p>

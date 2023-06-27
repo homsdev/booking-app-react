@@ -1,17 +1,18 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { FaArrowRight } from "react-icons/fa";
 
-import getData from "../../utils/api";
+import useFetch from "../../utils/useFetch";
+
 
 /** Component: a Function that accepts props and returns a description of its UI */
 export const BookablesList = ({ bookable, setBookable }) => {
   
-  /**Array with two elements: Value, updaterFunction */
-  /**You can pass a function to set a lazy initial state */
-  /*const [value,setValue] = useState(()-> return initialState)*/
-  const [bookables, setBookables] = useState([]);
-  const [error, setError] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+
+  const {
+    data: bookables = [],
+    status,
+    error,
+  } = useFetch("http://localhost:3001/bookables");
 
   const group = bookable?.group;
 
@@ -20,17 +21,8 @@ export const BookablesList = ({ bookable, setBookable }) => {
 
   /** Handling side effects */
   useEffect(() => {
-    getData("http://localhost:3001/bookables")
-      .then((bookables) => {
-        setBookable(bookables[0]);
-        setBookables(bookables);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        setError(error);
-        setIsLoading(false);
-      });
-  }, [setBookable]);
+    setBookable(bookables[0]);
+  }, [bookables, setBookable]);
 
   /**Event Handler: function that runs in response to an event */
   function changeGroup({ target }) {
@@ -51,11 +43,11 @@ export const BookablesList = ({ bookable, setBookable }) => {
     setBookable(nextBookable);
   }
 
-  if (error) {
+  if (status === "error") {
     return <p>{error.message}</p>;
   }
 
-  if (isLoading) {
+  if (status === "loading") {
     return <p>Spinner Loading Bookables...</p>;
   }
 
@@ -79,11 +71,7 @@ export const BookablesList = ({ bookable, setBookable }) => {
         ))}
       </ul>
       <p>
-        <button
-          className="btn"
-          onClick={nextBookable}
-          autoFocus
-        >
+        <button className="btn" onClick={nextBookable} autoFocus>
           <FaArrowRight />
           <span>Next</span>
         </button>
