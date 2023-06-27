@@ -1,8 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import UserContext, { UserSetContext } from "./UserContext";
 
 export const UserPicker = () => {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const user = useContext(UserContext);
+  const setUser = useContext(UserSetContext);
 
   useEffect(() => {
     async function fetchData() {
@@ -11,21 +14,35 @@ export const UserPicker = () => {
 
       if (data) {
         setUsers(data);
+        setUser(data[0]);
         setIsLoading(false);
       }
     }
 
     fetchData();
-  }, []);
+  }, [setUser]);
+
+  function handleSelect({ target }) {
+    const selectedID = parseInt(target.value, 10);
+    const selectedUser = users.find((u) => u.id === selectedID);
+
+    setUser(selectedUser);
+  }
 
   return (
     <>
       {isLoading ? (
         <p>_Loading...</p>
       ) : (
-        <select>
+        <select
+          className="user-picker"
+          onChange={handleSelect}
+          value={user?.id}
+        >
           {users.map((u, i) => (
-            <option key={i}>{u.name}</option>
+            <option key={i} value={u.id}>
+              {u.name}
+            </option>
           ))}
         </select>
       )}
